@@ -30,6 +30,7 @@ client.connect()
 client.loop_background()
 
 while True:
+    // latitude
     value = random.randint(30, 60)
     print("Update humidity:", value)
     client.publish("humidity", value)
