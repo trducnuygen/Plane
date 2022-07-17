@@ -46,6 +46,14 @@ landing_alt = range(10, 3000)
 
 count = 0
 
+# city list
+list_city = {
+    1: "New York",
+    2: "Los Angeles",
+    3: "Chicago",
+    4: "Houston",
+}
+
 while True:
     # latitude
     latitude = random.randint(0, 90)
