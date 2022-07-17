@@ -47,14 +47,6 @@ landing_alt = range(10, 3000)
 count = 0
 
 while True:
-    value = random.randint(30, 60)   
-    print("Update humidity:", value)
-    client.publish("humidity", value)      
-    value1 = random.randint(0, 50)
-    print("Update temperature:", value1)
-    client.publish("temperature",value1)
-    
-
     # speed & altitude condition.
     speed = 0
     altitude = 0
@@ -130,9 +122,4 @@ while True:
     
     # end.
     time.sleep(10)
-
-
-
-
-
 
