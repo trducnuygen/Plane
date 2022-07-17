@@ -70,9 +70,11 @@ while True:
     latitude = random.randint(0, 90)
     print("Update latitude: {}°".format(latitude))
     client.publish("latitude", latitude)
-    value1 = random.randint(0, 50)
-    print("Update temperature:", value1)
-    client.publish("temperature",value1)
+    
+    #longitude
+    longitude = random.randint(0, 50)
+    print("Update longitude: {}°".format(longitude))
+    client.publish("temperature",longitude)
 
     
     # speed & altitude condition.
