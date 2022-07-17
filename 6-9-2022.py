@@ -47,10 +47,10 @@ landing_alt = range(10, 3000)
 count = 0
 
 while True:
-    // latitude
-    value = random.randint(30, 60)
-    print("Update humidity:", value)
-    client.publish("humidity", value)
+    # latitude
+    latitude = random.randint(0, 90)
+    print("Update latitude: {}°".format(latitude))
+    client.publish("latitude", latitude)
     value1 = random.randint(0, 50)
     print("Update temperature:", value1)
     client.publish("temperature",value1)
