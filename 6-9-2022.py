@@ -52,6 +52,17 @@ list_city = {
     2: "Los Angeles",
     3: "Chicago",
     4: "Houston",
+    5: "Philadelphia",
+    6: "San Diego",
+    7: "Dallas",
+    8: "Indianapolis",
+    9: "San Francisco",
+    10: "Austin",
+    11: "Columbus",
+    12: "Charlotte",
+    13: "Detroit",
+    14: "Seattle",
+    15: "Boston"
 }
 
 while True:
