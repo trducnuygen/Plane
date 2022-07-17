@@ -67,16 +67,16 @@ list_city = {
 
 while True:
     # latitude
-    latitude = random.randint(0, 90)
+    latitude = random.randint(-90, 90)
     print("Update latitude: {}°".format(latitude))
     client.publish("latitude", latitude)
-    
+
     #longitude
-    longitude = random.randint(0, 50)
+    longitude = random.randint(-180, 179)
     print("Update longitude: {}°".format(longitude))
     client.publish("temperature",longitude)
 
-    
+
     # speed & altitude condition.
     speed = 0
     altitude = 0
