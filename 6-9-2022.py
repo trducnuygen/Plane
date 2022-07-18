@@ -154,6 +154,7 @@ while i<=100:
         altitude = altitude + random.randint(10, 200)
         speed = 200
 
+    
     # for situation where it got bugged and repeat for ever.
     if speed_last == speed and altitude_last == altitude and speed != cruise_speed and altitude != cruise_altitude:
         count_rep += 1
