@@ -5,7 +5,7 @@ from  Adafruit_IO import  MQTTClient
 
 AIO_FEED_ID = ""
 AIO_USERNAME = "namelessbtw"
-AIO_KEY = "aio_EUet777xm3KJtxRt8XxtVRiP0CdF"
+AIO_KEY = "aio_tjLb64hLJ1yArrjRQBiB6PcN0JG7"
 
 def  connected(client):
     print("Service connected")
@@ -59,8 +59,8 @@ altitude_last = 0
 
 # city list
 city_departure = {"Washington D.C"}
-city_arrival = {"Las Vegas"}
 list_city = {
+    0: "Las Vegas",
     1: "New York",
     2: "Los Angeles",
     3: "Chicago",
@@ -223,12 +223,12 @@ while True:
     altitude_last = min([altitude, 12000])
 
     # destination
-    while city_arrival is True:
-        if altitude == 0 and speed < 30 and vector == 'down':
-            print("Update destination: ", list_city[choice(range(1,15))])
-            client.publish("destination", list_city[choice(range(1,15))])
-        else:
-            print("It is flying to Las Vegas!")
+    city_arrival = choice(list_city)
+    if altitude == 0 or speed < 30 and vector == 'down' and city_arrival == "Las Vegas":
+        print("Update destination: ", list_city[choice(range[0,15])])
+        client.publish("destination", list_city[choice(range[0,15])])
+    else:
+        print("It is flying to Las Vegas!")
 
     # end.
     time.sleep(10)
