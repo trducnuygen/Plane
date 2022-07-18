@@ -36,6 +36,8 @@ vector = 'up'
 cruise_speed = 780
 cruise_altitude = 12000
 
+max_fuel = 100
+
 # range for speed
 hover_speed = range(200, 400)
 mid_stage_up_speed = range(400, cruise_speed - 75)
@@ -56,6 +58,7 @@ count_stop = 0
 # define vars for checking errors.
 speed_last = 0
 altitude_last = 0
+fuel_last = max_fuel
 
 # city list
 list_city = {
@@ -87,10 +90,13 @@ while True:
     print("Update longitude: {}°".format(longitude))
     client.publish("temperature",longitude)
 
-    # speed & altitude condition.
+    # speed & altitude & fuel condition.
     speed = speed_last
     altitude = altitude_last
+    fuel = fuel_last
 
+    fuel = fuel - 0.5
+    
     # when cruising and  wanna land.
     if speed == cruise_speed and count == 5 and vector == 'up':
         speed = speed - randint(25, 50)
@@ -219,6 +225,10 @@ while True:
     client.publish("altitude", min([altitude, 12000]))
     altitude_last = min([altitude, 12000])
     
+    # update fuel
+    print("Update fuel:", min([fuel, 100]))
+    client.publish("altitude", min([fuel, 100]))
+    fuel_last = min([fuel, 100])
     
     # end.
     time.sleep(10)
