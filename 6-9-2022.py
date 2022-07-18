@@ -5,7 +5,7 @@ from  Adafruit_IO import  MQTTClient
 
 AIO_FEED_ID = ""
 AIO_USERNAME = "namelessbtw"
-AIO_KEY = "aio_KIXl65ju2oUHken80YFlshsJyx8m"
+AIO_KEY = "aio_EUet777xm3KJtxRt8XxtVRiP0CdF"
 
 def  connected(client):
     print("Service connected")
@@ -88,7 +88,7 @@ while True:
     client.publish("longitude",longitude)
     
     #destination
-    destination = randint(0,15)
+    destination = randint(1,15)
     print("Update destination: ", list_city[destination])
     client.publish("destination", list_city[destination])
 
