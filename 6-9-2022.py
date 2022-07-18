@@ -226,7 +226,7 @@ while True:
         print("Update destination: ", list_city[choice(range(1,5))])
         client.publish("destination", list_city[choice(range(1,5))])
     elif 200 < speed_last < 400:
-        print("Update destination: ", list_city[choice(5,10)])
+        print("Update destination: ", list_city[choice(range(5,10))])
         client.publish("destination", list_city[choice(range(5,10))])
     elif 400< speed_last < 800:
         print("Update destination: ", list_city[choice(range(10,15))])
