@@ -1,5 +1,5 @@
 
-import random
+from random import randint, choice
 import time
 import  sys
 from  Adafruit_IO import  MQTTClient
@@ -67,12 +67,12 @@ list_city = {
 
 while True:
     # latitude
-    latitude = random.randint(25, 50)
+    latitude = randint(25, 50)
     print("Update latitude: {}°".format(latitude))
     client.publish("latitude", latitude)
 
     #longitude
-    longitude = random.randint(66, 126)
+    longitude = randint(66, 126)
     print("Update longitude: {}°".format(longitude))
     client.publish("temperature",longitude)
 
@@ -83,30 +83,30 @@ while True:
 
     # when cruising and  wanna land.
     if speed == cruise_speed and count == 5:
-        speed = speed - random.randint(25, 50)
+        speed = speed - randint(25, 50)
         vector = 'down'
         count = 0
-        altitude = altitude - random.randint(385, 770)
+        altitude = altitude - randint(385, 770)
 
     # when on land.
     elif speed == 0 and vector == 'down':
-        speed = speed + random.randint(10, 25)
+        speed = speed + randint(10, 25)
         vector = 'up'
         altitude = altitude + 2
     
     elif speed == 0 and vector == 'up':
-        speed = speed + random.randint(10, 25)
+        speed = speed + randint(10, 25)
         altitude = altitude + 2
 
     # taking off stage
     elif altitude in taking_off_alt and speed >= 200 and speed <= 400:
-        speed = speed + random.randint(20, 50)
-        altitude = altitude + random.randint(450, 770)
+        speed = speed + randint(20, 50)
+        altitude = altitude + randint(450, 770)
     
     # stage 2 of flying
     elif altitude in mid_stage_up and speed > 400 and speed <= cruise_speed - 75:
-        speed = speed + random.randint(30, 75)
-        altitude = altitude + random.randint(462, 1154)
+        speed = speed + randint(30, 75)
+        altitude = altitude + randint(462, 1154)
 
     # cruise time, rmb to set alt to cruise alt.
     elif altitude in mid_stage_up and speed > cruise_speed - 75:
@@ -121,22 +121,22 @@ while True:
 
     # will now be conducting operation landing.
     elif altitude in mid_stage_down and speed >= 400 and speed <= cruise_speed - 20:
-        speed = speed - random.randint(30, 75)
-        altitude = altitude - random.randint(462, 1154)
+        speed = speed - randint(30, 75)
+        altitude = altitude - randint(462, 1154)
     
     # about to land and at alt around 500m. --> gonna update the altitude here maybe.
     elif altitude in landing_alt and speed >= 200 and speed < 400:
-        speed = speed - random.randint(20, 50)
-        altitude = random.choice(range(200, 500))
+        speed = speed - randint(20, 50)
+        altitude = choice(range(200, 500))
 
     # gonna land.
     elif altitude in landing_alt and speed < 200:
         altitude = 0
-        speed = random.randint(10, 180)
+        speed = randint(10, 180)
 
     # on land and wanna fly up
     elif altitude_last == 0 and speed_last in range(10, 180) and vector == 'up':
-        altitude = altitude + random.randint(10, 200)
+        altitude = altitude + randint(10, 200)
         speed = 200
 
     # update speed
