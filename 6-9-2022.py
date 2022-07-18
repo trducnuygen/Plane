@@ -5,7 +5,7 @@ from  Adafruit_IO import  MQTTClient
 
 AIO_FEED_ID = ""
 AIO_USERNAME = "namelessbtw"
-AIO_KEY = "aio_vaWy263KkFsF4qNlNIYSXOZngSWl"
+AIO_KEY = "aio_EUet777xm3KJtxRt8XxtVRiP0CdF"
 
 def  connected(client):
     print("Service connected")
@@ -61,6 +61,7 @@ altitude_last = 0
 fuel_last = max_fuel
 
 # city list
+city_departure = {"Washington D.C"}
 list_city = {
     1: "New York",
     2: "Los Angeles",
@@ -88,7 +89,8 @@ while True:
     #longitude
     longitude = randint(66, 126)
     print("Update longitude: {}°".format(longitude))
-    client.publish("temperature",longitude)
+    client.publish("longitude",longitude)
+
 
     # speed & altitude & fuel condition.
     speed = speed_last
@@ -140,11 +142,11 @@ while True:
     elif altitude < cruise_altitude - 1700 and altitude > 10000 and vector == 'up':
         altitude = cruise_altitude
         speed = cruise_speed
-    
+
     # adjust speed for cruising
     elif altitude == cruise_altitude and speed != cruise_speed and vector == 'up':
         speed = cruise_speed
-    
+
     # still cruising.
     elif speed == cruise_speed and altitude == cruise_altitude and count <= 5:
         speed = cruise_speed
@@ -154,7 +156,7 @@ while True:
     elif altitude in mid_stage_down and speed in mid_stage_down_speed and vector == 'down':
         speed = speed - randint(30, 75)
         altitude = altitude - randint(962, 1554)
-    
+
     # about to land and at alt around 500m. --> gonna update the altitude here maybe.
     elif altitude in landing_alt and speed in hover_speed and vector == 'down':
         speed = speed - randint(20, 50)
@@ -163,25 +165,25 @@ while True:
     # gonna land.
     elif altitude in landing_alt and vector == 'down':
         altitude = altitude - randint(50, 150)
-    
+
     # decelerate when landing on land
     elif altitude > 150 and altitude < 310 and speed < 200 and speed >= 30 and vector == 'down':
         speed = speed - randint(10, 25)
         altitude = 0
-        
+
     # further decelerate on land.
     elif altitude == 0 and speed < 200 and speed >= 30 and vector == 'down':
         speed = speed - randint(10, 25)
-    
+
     # stop
     elif altitude == 0 and speed < 30 and vector == 'down':
         speed = 0
         count_stop = count_stop + 1
-    
+
     # stop for fueling
     elif altitude == 0 and speed == 0 and count_stop < 5:
         count_stop += 1
-    
+
     # on land and wanna fly up
     elif altitude_last == 0 and speed_last in range(10, 180) and vector == 'up':
         altitude = altitude + randint(10, 200)
@@ -195,26 +197,26 @@ while True:
             # situation 1: speed too high when not in altitude for stage 2.
             if speed in mid_stage_up_speed and altitude in taking_off_alt and vector == 'up':
                 altitude = altitude + randint(250, 500)
-            
+
             # situation 2: speed too low when in altitude for stage 2.
             if speed in hover_speed and altitude in mid_stage_up and vector == 'up':
                 speed = speed + randint(20, 40)
-                
+
             # situation 3: speed too low (speed in hover) when not in altitude for stage 5 (alt for hover).
             if speed in hover_speed and altitude in mid_stage_down and vector == 'down':
                 altitude = altitude - randint(200, 350)
-                
+
             # situation 4: speed too high (not in hover) when in altitude for stage 5.
             if speed in mid_stage_down_speed and altitude in landing_alt and vector == 'down':
                 speed = speed - randint(20, 40)
-            
+
             # situation 5: speed too high (in hover) when in altitude for actual landing:
             if speed in hover_speed and altitude < 310 and vector == 'down':
                 speed = speed - randint(20, 40)
-            
+
             # reset count
             count_rep = 0
-            
+
     # update speed
     print("Update speed:", min([speed, 780]))
     client.publish("speed", min([speed, 780]))
@@ -230,6 +232,7 @@ while True:
     client.publish("altitude", min([fuel, 100]))
     fuel_last = min([fuel, 100])
     
+
     # end.
     time.sleep(10)
 
