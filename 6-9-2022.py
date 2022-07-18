@@ -88,7 +88,7 @@ while True:
     client.publish("longitude",longitude)
     
     #destination
-    destination = randint[0,15]
+    destination = randint(0,15)
     print("Update destination: ", list_city[destination])
     client.publish("destination", list_city[destination])
 
