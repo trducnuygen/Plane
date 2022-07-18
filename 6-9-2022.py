@@ -59,6 +59,7 @@ altitude_last = 0
 
 # city list
 city_departure = {"Washington D.C"}
+city_arrival = {"Las Vegas"}
 list_city = {
     1: "New York",
     2: "Los Angeles",
@@ -220,17 +221,14 @@ while True:
     print("Update altitude:", min([altitude, 12000]))
     client.publish("altitude", min([altitude, 12000]))
     altitude_last = min([altitude, 12000])
-    
-    #destination
-    if speed_last < 200:
-        print("Update destination: ", list_city[choice(range(1,5))])
-        client.publish("destination", list_city[choice(range(1,5))])
-    elif 200 < speed_last < 400:
-        print("Update destination: ", list_city[choice(range(5,10))])
-        client.publish("destination", list_city[choice(range(5,10))])
-    elif 400< speed_last < 800:
-        print("Update destination: ", list_city[choice(range(10,15))])
-        client.publish("destination", list_city[choice(range(10,15))])
+
+    # destination
+    while city_arrival is True:
+        if altitude == 0 and speed < 30 and vector == 'down':
+            print("Update destination: ", list_city[choice(range(1,15))])
+            client.publish("destination", list_city[choice(range(1,15))])
+        else:
+            print("It is flying to Las Vegas!")
 
     # end.
     time.sleep(10)
