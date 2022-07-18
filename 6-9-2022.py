@@ -1,12 +1,11 @@
-
-import random
+from random import randint, choice
 import time
 import  sys
 from  Adafruit_IO import  MQTTClient
 
 AIO_FEED_ID = ""
 AIO_USERNAME = "namelessbtw"
-AIO_KEY = "aio_QMsK29fJHPQvTTmWofsI26snFeSA"
+AIO_KEY = "aio_vaWy263KkFsF4qNlNIYSXOZngSWl"
 
 def  connected(client):
     print("Service connected")
@@ -53,15 +52,41 @@ count = 0
 count_rep = 0
 count_stop = 0
 
+
 # define vars for checking errors.
 speed_last = 0
 altitude_last = 0
 
-# change i to True value like before for eternal repetition
-i=0
-while i<=100:
-    i+=1
-    
+# city list
+list_city = {
+    1: "New York",
+    2: "Los Angeles",
+    3: "Chicago",
+    4: "Houston",
+    5: "Philadelphia",
+    6: "San Diego",
+    7: "Dallas",
+    8: "Indianapolis",
+    9: "San Francisco",
+    10: "Austin",
+    11: "Columbus",
+    12: "Charlotte",
+    13: "Detroit",
+    14: "Seattle",
+    15: "Boston"
+}
+
+while True:
+    # latitude
+    latitude = randint(25, 50)
+    print("Update latitude: {}°".format(latitude))
+    client.publish("latitude", latitude)
+
+    #longitude
+    longitude = randint(66, 126)
+    print("Update longitude: {}°".format(longitude))
+    client.publish("temperature",longitude)
+
     # speed & altitude condition.
     speed = speed_last
     altitude = altitude_last
@@ -69,26 +94,28 @@ while i<=100:
     # when cruising and  wanna land.
     if speed == cruise_speed and count == 5 and vector == 'up':
         speed = speed - random.randint(25, 50)
+
         vector = 'down'
         count = 0
-        altitude = altitude - random.randint(385, 770)
+        altitude = altitude - randint(385, 770)
 
     # when on land.
     elif speed == 0 and vector == 'down' and altitude == 0:
         speed = speed + random.randint(10, 25)
+
         vector = 'up'
         altitude = altitude + 2
     
     # start the flight
     elif speed == 0 and vector == 'up':
-        speed = speed + random.randint(10, 25)
+        speed = speed + randint(10, 25)
         altitude = altitude + 2
 
     # accelerating
     elif speed > 0 and speed < 200 and vector == 'up':
         speed = speed + random.randint(10, 25)
         
-    # taking off stage
+    # taking off stag
     elif altitude in taking_off_alt and speed in hover_speed and vector == 'up':
         speed = speed + random.randint(20, 35)
         altitude = altitude + random.randint(500, 700)
@@ -151,7 +178,7 @@ while i<=100:
     
     # on land and wanna fly up
     elif altitude_last == 0 and speed_last in range(10, 180) and vector == 'up':
-        altitude = altitude + random.randint(10, 200)
+        altitude = altitude + randint(10, 200)
         speed = 200
 
     
