@@ -5,7 +5,7 @@ from  Adafruit_IO import  MQTTClient
 
 AIO_FEED_ID = ""
 AIO_USERNAME = "namelessbtw"
-AIO_KEY = "aio_vaWy263KkFsF4qNlNIYSXOZngSWl"
+AIO_KEY = "aio_LsgO13N47SXlzNaIRMCBPTFfU7ri"
 
 def  connected(client):
     print("Service connected")
@@ -208,7 +208,7 @@ while True:
             
             # reset count
             count_rep = 0
-            
+
     # update speed
     print("Update speed:", min([speed, 780]))
     client.publish("speed", min([speed, 780]))
@@ -218,8 +218,8 @@ while True:
     print("Update altitude:", min([altitude, 12000]))
     client.publish("altitude", min([altitude, 12000]))
     altitude_last = min([altitude, 12000])
-    
-    
+
+
     # end.
     time.sleep(10)
 
