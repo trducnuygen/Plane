@@ -30,103 +30,166 @@ client.on_subscribe = subscribe
 client.connect()
 client.loop_background()
 
-speed_last = 0
-altitude_last = 0
-
-# vector_dict = {'up': 1, 'down': 0}
+# vector takes 2 values: up and down.
 vector = 'up'
 
+# cruising value
 cruise_speed = 780
 cruise_altitude = 12000
 
-taking_off_alt = range(10, 2000)
+# range for speed
+hover_speed = range(200, 400)
+mid_stage_up_speed = range(400, cruise_speed - 75)
+mid_stage_down_speed = range(400, cruise_speed - 20)
+
+# range for altitude
+taking_off_alt = range(2, 4000)
 mid_stage_up = range(4000, 12000)
 mid_stage_down = range(3000, 12000)
-landing_alt = range(10, 3000)
+landing_alt = range(310, 3000)
 
+# define counts
 count = 0
+count_rep = 0
+count_stop = 0
 
-while True:
-    // latitude
-    value = random.randint(30, 60)
-    print("Update humidity:", value)
-    client.publish("humidity", value)
-    value1 = random.randint(0, 50)
-    print("Update temperature:", value1)
-    client.publish("temperature",value1)
+# define vars for checking errors.
+speed_last = 0
+altitude_last = 0
 
+# change i to True value like before for eternal repetition
+i=0
+while i<=100:
+    i+=1
     
     # speed & altitude condition.
-    speed = 0
-    altitude = 0
+    speed = speed_last
+    altitude = altitude_last
 
     # when cruising and  wanna land.
-    if speed == cruise_speed and count == 5:
+    if speed == cruise_speed and count == 5 and vector == 'up':
         speed = speed - random.randint(25, 50)
         vector = 'down'
         count = 0
         altitude = altitude - random.randint(385, 770)
 
     # when on land.
-    elif speed == 0 and vector == 'down':
+    elif speed == 0 and vector == 'down' and altitude == 0:
         speed = speed + random.randint(10, 25)
         vector = 'up'
         altitude = altitude + 2
     
+    # start the flight
     elif speed == 0 and vector == 'up':
         speed = speed + random.randint(10, 25)
         altitude = altitude + 2
 
+    # accelerating
+    elif speed > 0 and speed < 200 and vector == 'up':
+        speed = speed + random.randint(10, 25)
+        
     # taking off stage
-    elif altitude in taking_off_alt and speed >= 200 and speed <= 400:
-        speed = speed + random.randint(20, 50)
-        altitude = altitude + random.randint(450, 770)
+    elif altitude in taking_off_alt and speed in hover_speed and vector == 'up':
+        speed = speed + random.randint(20, 35)
+        altitude = altitude + random.randint(500, 700)
     
     # stage 2 of flying
-    elif altitude in mid_stage_up and speed > 400 and speed <= cruise_speed - 75:
-        speed = speed + random.randint(30, 75)
-        altitude = altitude + random.randint(462, 1154)
+    elif altitude in mid_stage_up and speed in mid_stage_up_speed and vector == 'up':
+        speed = speed + random.randint(40, 75)
+        altitude = altitude + random.randint(662, 1654)
 
-    # cruise time, rmb to set alt to cruise alt.
-    elif altitude in mid_stage_up and speed > cruise_speed - 75:
-        speed = cruise_speed
-        count += 1
+    # almost cruise time, gonna increase altitude.
+    elif altitude in mid_stage_up and speed > cruise_speed - 75 and vector == 'up':
+        altitude = altitude + random.randint(500, 1500)
+        speed = speed + random.randint(1, 3)
+        
+    # increase altitude
+    elif altitude < cruise_altitude - 1700 and altitude > 10000 and vector == 'up':
         altitude = cruise_altitude
+        speed = cruise_speed
+    
+    # adjust speed for cruising
+    elif altitude == cruise_altitude and speed != cruise_speed and vector == 'up':
+        speed = cruise_speed
     
     # still cruising.
-    elif speed == cruise_speed and count < 5:
+    elif speed == cruise_speed and altitude == cruise_altitude and count <= 5:
         speed = cruise_speed
         count += 1
 
     # will now be conducting operation landing.
-    elif altitude in mid_stage_down and speed >= 400 and speed <= cruise_speed - 20:
+    elif altitude in mid_stage_down and speed in mid_stage_down_speed and vector == 'down':
         speed = speed - random.randint(30, 75)
-        altitude = altitude - random.randint(462, 1154)
+        altitude = altitude - random.randint(962, 1554)
     
     # about to land and at alt around 500m. --> gonna update the altitude here maybe.
-    elif altitude in landing_alt and speed >= 200 and speed < 400:
+    elif altitude in landing_alt and speed in hover_speed and vector == 'down':
         speed = speed - random.randint(20, 50)
-        altitude = random.choice(range(200, 500))
+        altitude = random.choice(range(200, 1000))
 
     # gonna land.
-    elif altitude in landing_alt and speed < 200:
+    elif altitude in landing_alt and vector == 'down':
+        altitude = altitude - random.randint(50, 150)
+    
+    # decelerate when landing on land
+    elif altitude > 150 and altitude < 310 and speed < 200 and speed >= 30 and vector == 'down':
+        speed = speed - random.randint(10, 25)
         altitude = 0
-        speed = random.randint(10, 180)
-
+        
+    # further decelerate on land.
+    elif altitude == 0 and speed < 200 and speed >= 30 and vector == 'down':
+        speed = speed - random.randint(10, 25)
+    
+    # stop
+    elif altitude == 0 and speed < 30 and vector == 'down':
+        speed = 0
+        count_stop = count_stop + 1
+    
+    # stop for fueling
+    elif altitude == 0 and speed == 0 and count_stop < 5:
+        count_stop += 1
+    
     # on land and wanna fly up
     elif altitude_last == 0 and speed_last in range(10, 180) and vector == 'up':
         altitude = altitude + random.randint(10, 200)
         speed = 200
 
+    # for situation where it got bugged and repeat for ever.
+    if speed_last == speed and altitude_last == altitude and speed != cruise_speed and altitude != cruise_altitude:
+        count_rep += 1
+        if count_rep == 3:
+            # situation 1: speed too high when not in altitude for stage 2.
+            if speed in mid_stage_up_speed and altitude in taking_off_alt and vector == 'up':
+                altitude = altitude + random.randint(250, 500)
+            
+            # situation 2: speed too low when in altitude for stage 2.
+            if speed in hover_speed and altitude in mid_stage_up and vector == 'up':
+                speed = speed + random.randint(20, 40)
+                
+            # situation 3: speed too low (speed in hover) when not in altitude for stage 5 (alt for hover).
+            if speed in hover_speed and altitude in mid_stage_down and vector == 'down':
+                altitude = altitude - random.randint(200, 350)
+                
+            # situation 4: speed too high (not in hover) when in altitude for stage 5.
+            if speed in mid_stage_down_speed and altitude in landing_alt and vector == 'down':
+                speed = speed - random.randint(20, 40)
+            
+            # situation 5: speed too high (in hover) when in altitude for actual landing:
+            if speed in hover_speed and altitude < 310 and vector == 'down':
+                speed = speed - random.randint(20, 40)
+            
+            # reset count
+            count_rep = 0
+            
     # update speed
     print("Update speed:", min([speed, 780]))
     client.publish("speed", min([speed, 780]))
-    speed_last = speed
+    speed_last = min([speed, 780])
 
     # update altitude
     print("Update altitude:", min([altitude, 12000]))
     client.publish("altitude", min([altitude, 12000]))
-    altitude_last = altitude
+    altitude_last = min([altitude, 12000])
     
     
     # end.
