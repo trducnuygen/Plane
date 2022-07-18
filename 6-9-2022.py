@@ -1,7 +1,9 @@
+from logging import exception
 from random import randint, choice
 import time
 import  sys
 from  Adafruit_IO import  MQTTClient
+from sqlalchemy import except_
 
 AIO_FEED_ID = ""
 AIO_USERNAME = "namelessbtw"
@@ -58,9 +60,7 @@ speed_last = 0
 altitude_last = 0
 
 # city list
-city_departure = {"Washington D.C"}
 list_city = {
-    0: "Las Vegas",
     1: "New York",
     2: "Los Angeles",
     3: "Chicago",
@@ -223,12 +223,12 @@ while True:
     altitude_last = min([altitude, 12000])
 
     # destination
-    city_arrival = choice(list_city)
-    if altitude == 0 or speed < 30 and vector == 'down' and city_arrival == "Las Vegas":
-        print("Update destination: ", list_city[choice(range[0,15])])
-        client.publish("destination", list_city[choice(range[0,15])])
+    city_arrival = randint(1,15)
+    if altitude == 0 or speed < 30 or list_city[city_arrival]== "New York":
+        print("Update destination: ",list_city[randint(2,15)])
+        client.publish("destination", list_city[randint(2,15)])
     else:
-        print("It is flying to Las Vegas!")
+        print("It is flying to New York!")
 
     # end.
     time.sleep(10)
