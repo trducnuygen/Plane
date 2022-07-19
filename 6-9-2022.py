@@ -1,11 +1,13 @@
+from logging import exception
 from random import randint, choice
 import time
 import  sys
 from  Adafruit_IO import  MQTTClient
+from sqlalchemy import except_
 
 AIO_FEED_ID = ""
 AIO_USERNAME = "namelessbtw"
-AIO_KEY = "aio_EUet777xm3KJtxRt8XxtVRiP0CdF"
+AIO_KEY = "aio_tjLb64hLJ1yArrjRQBiB6PcN0JG7"
 
 def  connected(client):
     print("Service connected")
@@ -61,7 +63,6 @@ altitude_last = 0
 fuel_last = max_fuel
 
 # city list
-city_departure = {"Washington D.C"}
 list_city = {
     1: "New York",
     2: "Los Angeles",
@@ -232,6 +233,13 @@ while True:
     client.publish("altitude", min([fuel, 100]))
     fuel_last = min([fuel, 100])
     
+    # destination
+    city_arrival = randint(1,15)
+    if altitude == 0 or speed < 30 or list_city[city_arrival]== "New York":
+        print("Update destination: ",list_city[randint(2,15)])
+        client.publish("destination", list_city[randint(2,15)])
+    else:
+        print("It is flying to New York!")
 
     # end.
     time.sleep(10)
