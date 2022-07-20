@@ -98,30 +98,31 @@ while True:
     altitude = altitude_last
     fuel = fuel_last
 
+        # fuel drop every update.
     fuel = fuel - 0.5
     
-        # when cruising and  wanna land.
+    # when cruising and  wanna land.
     if speed == cruise_speed and count == 5 and vector == 'up':
         speed = speed - randint(25, 50)
         vector = 'down'
         count = 0
         altitude = altitude - randint(385, 770)
 
-    # when on land.
+    # when on land to refule and start another flight
     elif speed == 0 and vector == 'down' and altitude == 0:
-        speed = speed + randint(10, 25)
+        speed = speed + randint(20, 30)
         vector = 'up'
         altitude = altitude + 2
         fuel = max_fuel
-    
-    # start the flight
-    elif speed == 0 and vector == 'up':
-        speed = speed + randint(10, 25)
-        altitude = altitude + 2
 
+    # start the flight
+    elif speed == 0 and vector == 'up' and altitude == 0:
+        speed = speed + randint(20, 30)
+        altitude = altitude + 2
+    
     # accelerating
     elif speed > 0 and speed < 200 and vector == 'up':
-        speed = speed + randint(10, 25)
+        speed = speed + randint(20, 30)
         
     # taking off stage
     elif altitude in taking_off_alt and speed in hover_speed and vector == 'up':
@@ -168,21 +169,16 @@ while True:
     
     # decelerate when landing on land
     elif altitude >= 1 and altitude < 310 and speed < 200 and speed >= 30 and vector == 'down':
-        speed = speed - randint(10, 25)
+        speed = speed - randint(15, 29)
         altitude = 0
         
     # further decelerate on land.
     elif altitude == 0 and speed < 200 and speed >= 30 and vector == 'down':
-        speed = speed - randint(10, 25)
+        speed = speed - randint(15, 29)
     
     # stop
     elif altitude == 0 and speed < 30 and vector == 'down':
         speed = 0
-        count_stop = count_stop + 1
-    
-    # stop for fueling
-    elif altitude == 0 and speed == 0 and count_stop < 5:
-        count_stop += 1
     
     # on land and wanna fly up
     elif altitude_last == 0 and speed_last in range(10, 180) and vector == 'up':
@@ -215,7 +211,7 @@ while True:
             
             # reset count
             count_rep = 0
-
+    
     # update speed
     print("Update speed:", min([speed, 780]))
     client.publish("speed", min([speed, 780]))
